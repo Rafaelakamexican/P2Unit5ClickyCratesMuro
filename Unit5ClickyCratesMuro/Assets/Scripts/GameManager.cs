@@ -9,7 +9,9 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public List<GameObject> targets;
+    private int lives;
     public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI livesText;
     public TextMeshProUGUI gameOverText;
     public Button restartButton;
     public GameObject titleScreen;
@@ -17,10 +19,19 @@ public class GameManager : MonoBehaviour
     private int score;
     private float spawnRate = 1.0f;
 
-    // Start is called before the first frame update
-    void Start()
+    //Method added to work with Target.cs and call GameOver() in GameManager.cs instead of Target.cs
+
+    public void UpdateLives(int livesToChange)
     {
-      
+        lives += livesToChange;
+
+        if (lives <= 0)
+        {
+            lives = 0;
+            GameOver();
+        }
+
+        livesText.text = "Lives: " + lives;
     }
 
     // Update is called once per frame
@@ -60,12 +71,13 @@ public class GameManager : MonoBehaviour
     public void StartGame(int difficulty)
     {
         isGameActive = true;
+        titleScreen.gameObject.SetActive(false);
         score = 0;
+        lives = 3;
+        livesText.text = "Lives: " + lives;
         spawnRate /= difficulty;
 
         StartCoroutine(SpawnTarget());
         UpdateScore(0);
-
-        titleScreen.gameObject.SetActive(false);
     }
 }
